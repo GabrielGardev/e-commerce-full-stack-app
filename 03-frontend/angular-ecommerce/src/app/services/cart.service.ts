@@ -27,16 +27,38 @@ export class CartService {
       alreadyExistsInCart = (existingCartItem != undefined);
     }
 
-    if (alreadyExistsInCart){
+    if (alreadyExistsInCart) {
       //increment the quantity
       existingCartItem.quantity++;
-    }else{
+    } else {
       //just add the item to the array
       this.cartItems.push(theCartItem);
     }
 
     //compute cart total price and total quality
     this.computeCartTotals();
+  }
+
+  decrementQuantity(theCartItem: CartItem) {
+    theCartItem.quantity--;
+
+    if (theCartItem.quantity == 0) {
+      this.remove(theCartItem);
+    } else {
+      this.computeCartTotals();
+    }
+  }
+
+  remove(theCartItem: CartItem) {
+    //get index of item in the array
+    const index = this.cartItems.indexOf(theCartItem);
+
+    //if found, remove the item from the array at given index
+    if (index > -1){
+      this.cartItems.splice(index, 1);
+
+      this.computeCartTotals();
+    }
   }
 
   computeCartTotals() {
@@ -57,7 +79,7 @@ export class CartService {
   }
 
   logCartData(totalPriceValue: number, totalQuantityValue: number) {
-    
+
     console.log('Contents of the cart');
     for (let tempCartItem of this.cartItems) {
       const subTotalPrice = tempCartItem.quantity * tempCartItem.unitPrice;
